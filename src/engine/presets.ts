@@ -25,7 +25,7 @@ export const DEFAULT_SETTINGS: NeonSettings = {
     tubeOpacity: 98,
     coreVisible: true,
     coreWidth: 35,
-    coreBrightness: 175,
+    coreBrightness: 100,
     coreColor: '#ffffff',
     glassBorder: false,
     laserSharpCore: true,

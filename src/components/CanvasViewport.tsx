@@ -18,6 +18,7 @@ interface CanvasViewportProps {
   onZoomChange: (zoom: number) => void;
   isRendering: boolean;
   onOpenFile?: (files: FileList | File[]) => void;
+  onSelectSample?: (sampleId: string) => void;
   svgLayers?: SvgPathLayer[];
   svgViewBox?: { x: number; y: number; width: number; height: number };
   selectedLayerIds?: string[];
@@ -40,6 +41,7 @@ export const CanvasViewport: React.FC<CanvasViewportProps> = ({
   onZoomChange,
   isRendering,
   onOpenFile,
+  onSelectSample,
   svgLayers = [],
   svgViewBox,
   selectedLayerIds = [],
@@ -481,25 +483,24 @@ export const CanvasViewport: React.FC<CanvasViewportProps> = ({
               }
             }}
           />
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="pointer-events-auto flex flex-col items-center justify-center p-8 bg-slate-900/85 hover:bg-slate-900/95 border-2 border-dashed border-slate-700 hover:border-cyan-400 rounded-2xl shadow-2xl backdrop-blur-md transition-all group cursor-pointer max-w-sm w-full select-none"
-            title="ছবি আপলোড করতে ক্লিক করুন (Click to Upload Artwork)"
-          >
-            <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 group-hover:bg-cyan-500/20 border border-cyan-500/30 group-hover:border-cyan-400 flex items-center justify-center text-cyan-400 mb-3 shadow-[0_0_15px_rgba(6,182,212,0.2)] group-hover:shadow-[0_0_24px_rgba(6,182,212,0.4)] transition-all transform group-hover:scale-105">
-              <FolderOpen className="w-8 h-8 text-cyan-400" />
-            </div>
-            <h3 className="text-sm font-semibold text-slate-100 group-hover:text-cyan-300 mb-1 transition-colors">
-              ছবি আপলোড করতে ক্লিক করুন
-            </h3>
-            <span className="text-[11px] text-cyan-400/80 font-medium mb-1.5">
-              Click to Upload Artwork
-            </span>
-            <p className="text-xs text-slate-400 group-hover:text-slate-300 leading-relaxed text-center">
-              EPS, SVG, PNG, JPG বা WebP ফাইল নির্বাচন করুন অথবা এখানে ড্র্যাগ করে ড্রপ করুন
-            </p>
-          </button>
+          <div className="pointer-events-auto flex flex-col items-center justify-center p-8 bg-slate-900/90 border border-slate-700/80 rounded-2xl shadow-2xl backdrop-blur-md max-w-sm w-full select-none">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full flex flex-col items-center justify-center p-8 bg-slate-950/60 hover:bg-slate-950/90 border-2 border-dashed border-slate-700 hover:border-cyan-400 rounded-xl transition-all group cursor-pointer"
+              title="Click to Upload Artwork"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 group-hover:bg-cyan-500/20 border border-cyan-500/30 group-hover:border-cyan-400 flex items-center justify-center text-cyan-400 mb-3 shadow-[0_0_15px_rgba(6,182,212,0.2)] group-hover:shadow-[0_0_24px_rgba(6,182,212,0.4)] transition-all transform group-hover:scale-105">
+                <FolderOpen className="w-8 h-8 text-cyan-400" />
+              </div>
+              <h3 className="text-sm font-semibold text-slate-100 group-hover:text-cyan-300 mb-1.5 transition-colors">
+                Upload Vector or Image
+              </h3>
+              <p className="text-xs text-slate-400 group-hover:text-slate-300 leading-relaxed text-center">
+                EPS, SVG, PNG, JPG, or WebP (or drag and drop here)
+              </p>
+            </button>
+          </div>
         </div>
       )}
     </div>

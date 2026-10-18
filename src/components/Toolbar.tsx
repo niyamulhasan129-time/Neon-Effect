@@ -13,8 +13,8 @@ import {
   Eye,
   SlidersHorizontal,
   Download,
-  Zap,
-  Trash2
+  Trash2,
+  Flame,
 } from 'lucide-react';
 
 interface ToolbarProps {
@@ -46,6 +46,7 @@ interface ToolbarProps {
 export const Toolbar: React.FC<ToolbarProps> = ({
   onOpenFile,
   onAddStrokeLayer,
+  onSelectSample,
   hasArtwork = false,
   onClearArtboard,
   canUndo,
@@ -62,26 +63,34 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onToggleShowOriginal,
   flicker,
   onToggleFlicker,
-  hyperGlow,
+  hyperGlow = false,
   onToggleHyperGlow,
   onOpenPresets,
   onOpenExport,
 }) => {
   return (
-    <header className="h-14 bg-slate-950/90 border-b border-slate-800/80 px-4 flex items-center justify-between gap-4 backdrop-blur-md z-30 select-none">
-      {/* Zone 1: Wordmark & Clear Artboard Action */}
-      <div className="flex items-center gap-3 shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.25)]">
-            <Zap className="w-4 h-4" />
+    <header className="h-14 bg-slate-950/95 border-b border-slate-800/80 px-3 sm:px-4 flex items-center justify-between gap-2 sm:gap-4 backdrop-blur-md z-30 select-none">
+
+      {/* Zone 1: Wordmark & File Actions */}
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-black/60 border border-slate-700/80 p-0.5 flex items-center justify-center shadow-[0_0_12px_rgba(255,0,230,0.25)] overflow-hidden shrink-0">
+            <img
+              src="/logo.svg"
+              alt="Neon Glow Effect"
+              className="w-full h-full object-contain"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/icon.png';
+              }}
+            />
           </div>
-          <span className="font-bold text-base tracking-tight text-white whitespace-nowrap">
-            Neon Sign Studio
+          <span className="font-bold text-sm sm:text-base tracking-tight text-white whitespace-nowrap">
+            Neon Glow Effect
           </span>
         </div>
 
         {/* Separator */}
-        <div className="h-5 w-px bg-slate-800 hidden sm:block" />
+        <div className="h-5 w-px bg-slate-800 hidden md:block" />
 
         {/* Clear Artboard Action */}
         <div className="flex items-center gap-1.5">
@@ -89,8 +98,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             <button
               onClick={onClearArtboard}
               disabled={!hasArtwork}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-rose-300 hover:text-white bg-rose-950/30 hover:bg-rose-900/50 border border-rose-800/60 hover:border-rose-600 disabled:opacity-30 disabled:hover:bg-rose-950/30 disabled:hover:text-rose-300 disabled:border-rose-900/30 disabled:cursor-not-allowed rounded-md transition-colors whitespace-nowrap shrink-0"
-              title="Clear artwork and empty artboard (আর্টবোর্ড খালি করুন)"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-rose-300 hover:text-white bg-rose-950/20 hover:bg-rose-900/40 border border-rose-900/40 hover:border-rose-700 disabled:opacity-30 disabled:hover:bg-rose-950/20 disabled:hover:text-rose-300 disabled:border-rose-900/30 disabled:cursor-not-allowed rounded-md transition-colors whitespace-nowrap shrink-0"
+              title="Clear artwork and empty artboard"
             >
               <Trash2 className="w-3.5 h-3.5 text-rose-400" />
               <span className="hidden sm:inline">Clear Artboard</span>
@@ -99,8 +108,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         </div>
       </div>
 
-      {/* Zone 2: Viewport & History Controls */}
-      <div className="hidden lg:flex items-center gap-2">
+      {/* Zone 2: Viewport & Effect Toggles */}
+      <div className="hidden md:flex items-center gap-2">
         {/* Undo / Redo */}
         <div className="flex items-center bg-slate-900/90 border border-slate-800 rounded-md p-0.5">
           <button
@@ -143,7 +152,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <button
             onClick={onFitCanvas}
             className="p-1.5 text-slate-400 hover:text-white transition-colors rounded border-l border-slate-800/80 ml-0.5"
-            title="Fit to Canvas"
+            title="Fit to Canvas (0)"
           >
             <Maximize2 className="w-3.5 h-3.5" />
           </button>
@@ -153,25 +162,42 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         <div className="flex items-center gap-1 bg-slate-900/90 border border-slate-800 rounded-md p-0.5">
           <button
             onClick={onToggleShowOriginal}
-            className={`px-2.5 py-1 text-xs rounded transition-colors flex items-center gap-1.5 ${
-              showOriginal ? 'bg-cyan-500/20 text-cyan-300' : 'text-slate-400 hover:text-slate-200'
+            className={`px-2 py-1 text-xs rounded transition-colors flex items-center gap-1.5 ${
+              showOriginal ? 'bg-cyan-500/20 text-cyan-300 font-semibold' : 'text-slate-400 hover:text-slate-200'
             }`}
             title="Hold or toggle to inspect original line art"
           >
             <Eye className="w-3.5 h-3.5" />
-            <span>Before / After</span>
+            <span className="hidden xl:inline">Before/After</span>
           </button>
 
           <button
             onClick={onToggleSplitView}
-            className={`px-2.5 py-1 text-xs rounded transition-colors flex items-center gap-1.5 ${
-              splitView ? 'bg-pink-500/20 text-pink-300' : 'text-slate-400 hover:text-slate-200'
+            className={`px-2 py-1 text-xs rounded transition-colors flex items-center gap-1.5 ${
+              splitView ? 'bg-pink-500/20 text-pink-300 font-semibold' : 'text-slate-400 hover:text-slate-200'
             }`}
             title="Interactive Split Screen comparison slider"
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span>Split View</span>
+            <span className="hidden xl:inline">Split View</span>
           </button>
+        </div>
+
+        {/* Realism Toggles: Flicker & HyperGlow */}
+        <div className="flex items-center gap-1 bg-slate-900/90 border border-slate-800 rounded-md p-0.5">
+
+          {onToggleHyperGlow && (
+            <button
+              onClick={onToggleHyperGlow}
+              className={`px-2 py-1 text-xs rounded transition-colors flex items-center gap-1 ${
+                hyperGlow ? 'bg-rose-500/20 text-rose-300 font-semibold' : 'text-slate-400 hover:text-slate-200'
+              }`}
+              title="Toggle Multi-Pass Hyper Glow Engine"
+            >
+              <Flame className={`w-3.5 h-3.5 ${hyperGlow ? 'text-rose-400' : ''}`} />
+              <span className="hidden xl:inline">HyperGlow</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -180,7 +206,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         <button
           onClick={onOpenExport}
           disabled={!hasArtwork}
-          className="flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold text-slate-950 bg-gradient-to-r from-cyan-400 to-cyan-300 hover:from-cyan-300 hover:to-white disabled:opacity-40 disabled:hover:from-cyan-400 disabled:hover:to-cyan-300 disabled:cursor-not-allowed disabled:shadow-none rounded-lg shadow-[0_0_14px_rgba(6,182,212,0.35)] transition-all whitespace-nowrap shrink-0 active:scale-95"
+          className="flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 text-xs font-semibold text-slate-950 bg-gradient-to-r from-cyan-400 to-cyan-300 hover:from-cyan-300 hover:to-white disabled:opacity-40 disabled:hover:from-cyan-400 disabled:hover:to-cyan-300 disabled:cursor-not-allowed disabled:shadow-none rounded-lg shadow-[0_0_14px_rgba(6,182,212,0.35)] transition-all whitespace-nowrap shrink-0 active:scale-95 cursor-pointer"
         >
           <Download className="w-3.5 h-3.5" />
           <span>Export Artwork</span>
@@ -189,3 +215,4 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     </header>
   );
 };
+

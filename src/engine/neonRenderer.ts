@@ -509,19 +509,34 @@ export function renderNeonScene(
       }
 
       ctx.save();
-      ctx.globalCompositeOperation = 'lighter'; // Additive natural radiance
 
-      const coreAlpha = (scaledSettings.tube.coreBrightness / 100) * flickerFactor;
+      const brightnessVal = Math.min(100, Math.max(1, scaledSettings.tube.coreBrightness ?? 100));
+      const t = (brightnessVal - 1) / 99; // 0.0 at 1, 1.0 at 100
 
-      // Tier 1: Soft radiant tinted plasma core (smooth transition from gas to white)
-      ctx.globalAlpha = Math.min(0.85, coreAlpha * 0.7);
-      ctx.filter = `blur(${Math.max(1, Math.round(0.35 * resScale))}px)`;
-      ctx.drawImage(coreCanvas, 0, 0);
+      if (t >= 0.999) {
+        // At 100: 100% pure solid white, absolutely NO blur, NO shadow
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.filter = 'none';
+        ctx.globalAlpha = 1.0;
+        ctx.drawImage(sharpCoreCanvas, 0, 0);
+      } else {
+        // From 1 to 99: transitions smoothly from blurred core to solid pure white
+        const blurAmount = (1 - t) * 14 * resScale;
 
-      // Tier 2: Incandescent white filament (pure center electrical discharge)
-      ctx.filter = 'none';
-      ctx.globalAlpha = Math.min(1.0, coreAlpha * (0.95 + dazzle * 0.25));
-      ctx.drawImage(sharpCoreCanvas, 0, 0);
+        // Blurred core (strong at 1, disappears as brightness reaches 100)
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.filter = `blur(${Math.max(1, Math.round(blurAmount))}px)`;
+        ctx.globalAlpha = (1 - t) * 0.95 * flickerFactor;
+        ctx.drawImage(coreCanvas, 0, 0);
+
+        // Crisp white core (fades in as brightness approaches 100)
+        if (t > 0.01) {
+          ctx.globalCompositeOperation = t > 0.85 ? 'source-over' : 'lighter';
+          ctx.filter = 'none';
+          ctx.globalAlpha = Math.min(1.0, t * 1.15) * flickerFactor;
+          ctx.drawImage(sharpCoreCanvas, 0, 0);
+        }
+      }
 
       ctx.restore();
     }
@@ -887,7 +902,7 @@ function renderSvgCore(
 
   ctx.lineCap = settings.tube.lineCap;
   ctx.lineJoin = settings.tube.lineJoin;
-  ctx.globalCompositeOperation = 'screen';
+  ctx.globalCompositeOperation = isWhiteFilament ? 'source-over' : 'screen';
 
   // Normalized core width ratio from user slider (5% to 100%)
   const coreRatio = Math.max(0.05, Math.min(1.0, (settings.tube.coreWidth ?? 35) / 100));

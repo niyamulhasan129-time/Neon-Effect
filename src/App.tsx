@@ -28,6 +28,7 @@ import {
   applyPaletteToLayers,
   applyColorToSelectedLayers,
 } from './engine/colorPalettes';
+import { SAMPLE_ARTWORKS } from './samples/sampleArt';
 
 // Fixed artboard size: strictly 4000x4000 px
 const ARTBOARD_SIZE = 4000;
@@ -577,6 +578,17 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleUndo, handleRedo]);
 
+  // Sample Artwork Handler
+  const handleSelectSample = useCallback(
+    (sampleId: string) => {
+      const sample = SAMPLE_ARTWORKS.find((s) => s.id === sampleId);
+      if (sample) {
+        loadSvgString(sample.svgContent, `${sample.title}.svg`, false);
+      }
+    },
+    [loadSvgString]
+  );
+
   // Preset Selection
   const handleApplyPreset = (preset: NeonPreset) => {
     pushSettings(preset.settings);
@@ -858,6 +870,7 @@ export default function App() {
       <Toolbar
         onOpenFile={handleOpenFiles}
         onAddStrokeLayer={handleAddStrokeLayers}
+        onSelectSample={handleSelectSample}
         hasArtwork={hasArtwork}
         onClearArtboard={handleClearArtboard}
         canUndo={historyIndex > 0}
@@ -959,6 +972,7 @@ export default function App() {
           onZoomChange={setZoom}
           isRendering={isRendering}
           onOpenFile={handleOpenFiles}
+          onSelectSample={handleSelectSample}
           svgLayers={svgLayers}
           svgViewBox={svgViewBox}
           selectedLayerIds={selectedLayerIds}

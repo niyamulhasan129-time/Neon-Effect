@@ -282,14 +282,14 @@ export const RightPanel: React.FC<RightPanelProps> = ({
                     <div className="flex justify-between text-[11px]">
                       <span className="text-slate-400">সাদা টিউবের উজ্জ্বলতা (Brightness)</span>
                       <span className="font-mono text-cyan-400">
-                        {settings.tube.coreBrightness}%
+                        {Math.min(100, Math.max(1, settings.tube.coreBrightness ?? 100))}%
                       </span>
                     </div>
                     <input
                       type="range"
-                      min="50"
-                      max="300"
-                      value={settings.tube.coreBrightness}
+                      min="1"
+                      max="100"
+                      value={Math.min(100, Math.max(1, settings.tube.coreBrightness ?? 100))}
                       onChange={(e) =>
                         updateTube({ coreBrightness: parseInt(e.target.value, 10) })
                       }
@@ -297,82 +297,7 @@ export const RightPanel: React.FC<RightPanelProps> = ({
                     />
                   </div>
 
-                  {/* Laser-Sharp Filament Core Toggle */}
-                  <div className="flex items-center justify-between pt-1 border-t border-slate-800/80">
-                    <div>
-                      <span className="text-[11px] font-medium text-slate-200 block">
-                        Laser Filament (শার্প কোর)
-                      </span>
-                      <span className="text-[10px] text-slate-400 block">
-                        Pin-sharp zero-blur pure white core
-                      </span>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={settings.tube.laserSharpCore !== false}
-                      onChange={(e) => updateTube({ laserSharpCore: e.target.checked })}
-                      className="rounded bg-slate-800 border-slate-700 text-cyan-500 focus:ring-0"
-                    />
-                  </div>
 
-                  {/* 3D Glass Tube Envelope Rim Toggle */}
-                  <div className="flex items-center justify-between pt-1 border-t border-slate-800/80">
-                    <div>
-                      <span className="text-[11px] font-medium text-slate-200 block">
-                        3D Glass Rim (কাঁচের বর্ডার)
-                      </span>
-                      <span className="text-[10px] text-slate-400 block">
-                        {settings.tube.glassBorder === true
-                          ? 'অন (টিউবের কিনারায় কালো রিম)'
-                          : 'বন্ধ (কালো রিম ছাড়া পরিষ্কার নিওন)'}
-                      </span>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={settings.tube.glassBorder === true}
-                      onChange={(e) => updateTube({ glassBorder: e.target.checked })}
-                      className="rounded bg-slate-800 border-slate-700 text-cyan-500 focus:ring-0"
-                    />
-                  </div>
-
-                  {/* Tube Edge Sharpness */}
-                  <div className="space-y-1 pt-1 border-t border-slate-800/80">
-                    <div className="flex justify-between text-[11px]">
-                      <span className="text-slate-400">Edge Sharpness</span>
-                      <NumberInputBadge
-                        value={settings.tube.edgeSharpness}
-                        min={50}
-                        max={100}
-                        unit="%"
-                        onChange={(val) => updateTube({ edgeSharpness: val })}
-                      />
-                    </div>
-                    <input
-                      type="range"
-                      min="50"
-                      max="100"
-                      value={settings.tube.edgeSharpness}
-                      onChange={(e) =>
-                        updateTube({ edgeSharpness: parseInt(e.target.value, 10) })
-                      }
-                      className="w-full h-1 bg-slate-800 rounded appearance-none cursor-pointer accent-cyan-400"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between pt-1 border-t border-slate-800/80">
-                    <span className="text-[11px] text-slate-400">Core Color</span>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="color"
-                        value={settings.tube.coreColor}
-                        onChange={(e) => updateTube({ coreColor: e.target.value })}
-                        className="w-6 h-6 rounded cursor-pointer border border-slate-700 bg-transparent"
-                      />
-                      <span className="font-mono text-[11px] text-slate-300">
-                        {settings.tube.coreColor.toUpperCase()}
-                      </span>
-                    </div>
-                  </div>
                 </>
               )}
             </div>
